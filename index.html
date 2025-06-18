@@ -1,203 +1,116 @@
-<!DOCTYPE html> 
-
-<html lang=”en”> 
-
-<head> 
-
-  <meta charset=”UTF-8”> 
-
-  <title>Employee Action Request Form</title> 
-
-  <style> 
-
-    Body { font-family: Arial, sans-serif; padding: 20px; } 
-
-    Table { width: 100%; border-collapse: collapse; } 
-
-    Td, th { padding: 5px; border: 1px solid #000; vertical-align: top; } 
-
-    .no-border { border: none; } 
-
-    .section-title { font-weight: bold; margin-top: 20px; } 
-
-    Input[type=”text”], select { width: 100%; } 
-
-  </style> 
-
-</head> 
-
-<body> 
-
- 
-
-<h2>Employee Action Request Form</h2> 
-
- 
-
-<form> 
-
-  <p><strong>From:</strong> United Cell Est.</p> 
-
-  <p><strong>To:</strong> Royal Commission for Jubail and Yanbu<br> 
-
-     <strong>Attn:</strong> Mr. Ahmad Ali Al Shiban</p> 
-
- 
-
-  <label>Ref (ID/PP No.): <input type=”text” name=”ref_no”></label><br><br> 
-
- 
-
-  <table> 
-
-    <tr> 
-
-      <td><label>Contract No: <input type=”text” name=”contract_no”></label></td> 
-
-      <td><label>PAR No: <input type=”text” name=”par_no”></label></td> 
-
-      <td><label>Date: <input type=”date” name=”par_date”></label></td> 
-
-    </tr> 
-
-  </table> 
-
- 
-
-  <p class=”section-title”>Position Information</p> 
-
- 
-
-  <table> 
-
-    <tr> 
-
-      <td>Position Title: <input type=”text” name=”position_title” value=”PEST CONTROLLER”></td> 
-
-      <td>Item No: <input type=”text” name=”item_no”></td> 
-
-    </tr> 
-
-    <tr> 
-
-      <td>Candidate Name: <input type=”text” name=”candidate_name” value=”SHAZAD HUSSEN”></td> 
-
-      <td>Nationality: <input type=”text” name=”nationality” value=”BANGLADESH”></td> 
-
-    </tr> 
-
-    <tr> 
-
-      <td>Employee No: <input type=”text” name=”employee_no” value=”2024-0416”></td> 
-
-      <td>Effective Date: <input type=”date” name=”effective_date”></td> 
-
-    </tr> 
-
-  </table> 
-
- 
-
-  <p><strong>Action:</strong></p> 
-
-  <label><input type=”checkbox” name=”action” value=”start”> Start</label> 
-
-  <label><input type=”checkbox” name=”action” value=”stop”> Stop</label> 
-
-  <label><input type=”checkbox” name=”action” value=”vacation”> Vacation</label> 
-
-  <label><input type=”checkbox” name=”action” value=”return”> Return from Vacation</label> 
-
-  <label><input type=”checkbox” name=”action” value=”transfer”> Transfer to another position</label> 
-
- 
-
-  <p><strong>Supervisory Position:</strong> <input type=”checkbox” name=”supervisory”> Yes</p> 
-
- 
-
-  <p class=”section-title”>Attachment:</p> 
-
-  <label>Bio Data/Info as necessary</label> 
-
- 
-
-  <p class=”section-title”>Approvals</p> 
-
- 
-
-  <ul> 
-
-    <li>Position is available</li> 
-
-    <li>Approved / Disapproved</li> 
-
-    <li>Satisfactory by need and qualification</li> 
-
-    <li>As supervisory position above Foreman / key position: Approved / Disproved</li> 
-
-  </ul> 
-
- 
-
-  <table> 
-
-    <tr> 
-
-      <td>PROJECT MANAGER</td> 
-
-      <td>CONTRACT SUPERVISOR / ENGINEER</td> 
-
-      <td>CONTRACT SPECIALIST</td> 
-
-      <td>GROUP MANAGER</td> 
-
-      <td>DEPARTMENT DIRECTOR</td> 
-
-    </tr> 
-
-    <tr> 
-
-      <td colspan=”5”>Date: <input type=”date” name=”approval_date”></td> 
-
-    </tr> 
-
-  </table> 
-
- 
-
-  <p class=”section-title”>Royal Commission Representative</p> 
-
-  <label>Actual Start: <input type=”date” name=”actual_start”></label> 
-
-  <label>Employee No: <input type=”text” name=”rc_employee_no”></label> 
-
-  <label>RC Field Engr Initial: <input type=”text” name=”engr_initial”></label> 
-
- 
-
-  <p class=”section-title”>Distribution:</p> 
-
-  <ul> 
-
-    <li>Contractor (Original)</li> 
-
-    <li>Contract Files</li> 
-
-    <li>R.J. – (842-S14)</li> 
-
-  </ul> 
-
- 
-
-  <button type=”submit”>Submit</button> 
-
-</form> 
-
- 
-
-</body> 
-
-</html> 
-
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PAR Forms Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { margin-top: 0; }
+    .form-section { display: none; margin-top: 20px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 6px; margin-top: 5px; }
+    .row { display: flex; gap: 10px; }
+    .row > div { flex: 1; }
+  </style>
+</head>
+<body>
+
+<h2>Personnel Action Request (PAR) Forms</h2>
+
+<label for="form-selector">Select Form Type:</label>
+<select id="form-selector" onchange="switchForm()">
+  <option value="start-par">Start PAR</option>
+  <option value="stop-par">Stop PAR</option>
+  <option value="vacation">Vacation</option>
+</select>
+
+<!-- START PAR FORM -->
+<div id="start-par" class="form-section" style="display: block;">
+  <form>
+    <h3>Start PAR Form</h3>
+    <div class="row">
+      <div><label>Contract No:<input type="text"></label></div>
+      <div><label>PAR No:<input type="text"></label></div>
+      <div><label>Date:<input type="date"></label></div>
+    </div>
+    <label>To:<input type="text" value="Royal Commission for Jubail and Yanbu"></label>
+    <label>Attn:<input type="text"></label>
+    <label>Ref (ID/PP No):<input type="text"></label>
+    <label>Position Title:<input type="text" value="PEST CONTROLLER"></label>
+    <label>Candidate Name:<input type="text"></label>
+    <label>Nationality:<input type="text"></label>
+    <label>Employee Number:<input type="text"></label>
+    <label>Effective Date:<input type="date"></label>
+    <label>Supervisory Position:
+      <select>
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+    </label>
+    <label>Attachment:<input type="file"></label>
+    <h4>Approval Signatures</h4>
+    <div class="row">
+      <div><label>Project Manager:<input type="text"></label></div>
+      <div><label>Contract Engineer:<input type="text"></label></div>
+      <div><label>Group Manager:<input type="text"></label></div>
+    </div>
+    <button type="submit">Submit Start PAR</button>
+  </form>
+</div>
+
+<!-- STOP PAR FORM -->
+<div id="stop-par" class="form-section">
+  <form>
+    <h3>Stop PAR Form</h3>
+    <label>Employee Name:<input type="text"></label>
+    <label>Employee Number:<input type="text"></label>
+    <label>Reason for Stop:<textarea></textarea></label>
+    <label>Effective Date:<input type="date"></label>
+    <label>Remarks:<textarea></textarea></label>
+    <h4>Approval Signatures</h4>
+    <div class="row">
+      <div><label>Supervisor:<input type="text"></label></div>
+      <div><label>Contract Manager:<input type="text"></label></div>
+    </div>
+    <button type="submit">Submit Stop PAR</button>
+  </form>
+</div>
+
+<!-- VACATION FORM -->
+<div id="vacation" class="form-section">
+  <form>
+    <h3>Vacation Form</h3>
+    <label>Employee Name:<input type="text"></label>
+    <label>Employee Number:<input type="text"></label>
+    <label>Start Date:<input type="date"></label>
+    <label>Return Date:<input type="date"></label>
+    <label>Total Days:<input type="number"></label>
+    <label>Type of Leave:
+      <select>
+        <option>Annual</option>
+        <option>Emergency</option>
+        <option>Sick</option>
+      </select>
+    </label>
+    <label>Remarks:<textarea></textarea></label>
+    <h4>Approval Signatures</h4>
+    <div class="row">
+      <div><label>Project Manager:<input type="text"></label></div>
+      <div><label>Contract Supervisor:<input type="text"></label></div>
+    </div>
+    <button type="submit">Submit Vacation Request</button>
+  </form>
+</div>
+
+<script>
+  function switchForm() {
+    const selected = document.getElementById("form-selector").value;
+    document.querySelectorAll('.form-section').forEach(form => {
+      form.style.display = 'none';
+    });
+    document.getElementById(selected).style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
