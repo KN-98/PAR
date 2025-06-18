@@ -47,12 +47,7 @@
     <label>Nationality:<input type="text"></label>
     <label>Employee Number:<input type="text"></label>
     <label>Effective Date:<input type="date"></label>
-    <label>Supervisory Position:
-      <select id="supervisory-select"
-        onchange="toggleDirectorApproval()">
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-      </select>
+    
     </label>
         
     <label>Attachment:<input type="file"></label>
@@ -61,6 +56,12 @@
       <div><label>Project Manager:<input type="text"></label></div>
       <div><label>Contract Engineer:<input type="text"></label></div>
       <div><label>Group Manager:<input type="text"></label></div>
+      <div><label>Supervisory Position:
+      <select id="supervisory-select"
+        onchange="toggleDirectorApproval()">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select></label></div>
     </div>
     <button type="submit">Submit Start PAR</button>
   </form>
@@ -79,6 +80,7 @@
     <div class="row">
       <div><label>Supervisor:<input type="text"></label></div>
       <div><label>Contract Manager:<input type="text"></label></div>
+       
     </div>
     <button type="submit">Submit Stop PAR</button>
   </form>
