@@ -122,6 +122,11 @@
     });
     document.getElementById(selected).style.display = 'block';
   }
+  function toggleDirectorApproval() {
+    const isSupervisory =
+      document.getElementById("supervisory-select").value === "yes";
+    document.getElementById("director-approval").style.display = isSupervisory ? "flex" : "none";
+  }
 </script>
 
 </body>
