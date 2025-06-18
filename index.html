@@ -48,9 +48,9 @@
     <label>Employee Number:<input type="text"></label>
     <label>Effective Date:<input type="date"></label>
    <label>Supervisory Position:
-      <select>
-        <option>No</option>
-        <option>Yes</option>
+      <select id="supervisory-select" onchange="toggleDirectorApproval()">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
       </select>
    </label>
         
@@ -109,8 +109,9 @@
       <div class="row" id="director-approval"
         style="display: none;">
        <div><label>Department Director:<input type="text"></label></div>
-
-    </div>
+<div class="row" id=director-approval" style="display: none;">
+  <div><label>Department Director:<input type="text"></label>
+    </div></div>
     <button type="submit">Submit Vacation Request</button>
   </form>
 </div>
@@ -123,7 +124,10 @@
     });
     document.getElementById(selected).style.display = 'block';
   }
-  
+  function toggleDirectorApproval() {
+    const isSupervisory = document.getElementById("director-approval").style.display = isSupervisory ? 
+      "flex" : "none";
+  }
 </script>
 
 </body>
