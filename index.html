@@ -16,8 +16,9 @@
 <body>
 
 <h2>PAR Form</h2>
- <label>Royal Commission for Jubail and Yanbu</label>
-    <label>Attn: Mr. Ahmad Ali AL Shiban</label>
+<label>Royal Commission for Jubail and Yanbu</label>
+<label>Attn: Mr. Ahmad Ali AL Shiban</label>
+
 <label for="form-selector">Select PAR Type:</label>
 <select id="form-selector" onchange="switchForm()">
   <option value="start-par">Start PAR</option>
@@ -25,8 +26,8 @@
   <option value="vacation">Vacation</option>
 </select>
 
-  <label for="form-selector">Select Contract:</label>
-<select id="form-selector" onchange="switchForm()">
+<label for="contract-selector">Select Contract:</label>
+<select id="contract-selector">
   <option value="S14-842">S14-842</option>
   <option value="Y01-842">Y01-842</option>
   <option value="Y01A-842">Y01A-842</option>
@@ -40,27 +41,27 @@
       <div><label>PAR No:<input type="text"></label></div>
       <div><label>Date:<input type="date"></label></div>
     </div>
-   
     <label>ID No:<input type="text"></label>
     <label>Position Title:<input type="text" value="PEST CONTROLLER"></label>
     <label>Full Name:<input type="text"></label>
     <label>Nationality:<input type="text"></label>
     <label>Employee Number:<input type="text"></label>
     <label>Effective Date:<input type="date"></label>
-   <label>Supervisory Position:
-      <select id="supervisory-select" onchange="toggleDirectorApproval()">
+    <label>Supervisory Position:
+      <select onchange="toggleDirectorApproval(this, 'director-approval-start')">
         <option value="No">No</option>
         <option value="Yes">Yes</option>
       </select>
-   </label>
-        
+    </label>
     <label>Attachment:<input type="file"></label>
     <h4>Approval Signatures</h4>
     <div class="row">
       <div><label>Project Manager:<input type="text"></label></div>
       <div><label>Contract Engineer:<input type="text"></label></div>
       <div><label>Group Manager:<input type="text"></label></div>
-      
+    </div>
+    <div class="row" id="director-approval-start" style="display: none;">
+      <div><label>Department Director:<input type="text"></label></div>
     </div>
     <button type="submit">Submit Start PAR</button>
   </form>
@@ -75,11 +76,19 @@
     <label>Reason for Stop:<textarea></textarea></label>
     <label>Effective Date:<input type="date"></label>
     <label>Remarks:<textarea></textarea></label>
+    <label>Supervisory Position:
+      <select onchange="toggleDirectorApproval(this, 'director-approval-stop')">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+    </label>
     <h4>Approval Signatures</h4>
     <div class="row">
       <div><label>Supervisor:<input type="text"></label></div>
       <div><label>Contract Manager:<input type="text"></label></div>
-       
+    </div>
+    <div class="row" id="director-approval-stop" style="display: none;">
+      <div><label>Department Director:<input type="text"></label></div>
     </div>
     <button type="submit">Submit Stop PAR</button>
   </form>
@@ -102,16 +111,20 @@
       </select>
     </label>
     <label>Remarks:<textarea></textarea></label>
+    <label>Supervisory Position:
+      <select onchange="toggleDirectorApproval(this, 'director-approval-vacation')">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+    </label>
     <h4>Approval Signatures</h4>
     <div class="row">
       <div><label>Project Manager:<input type="text"></label></div>
       <div><label>Contract Supervisor:<input type="text"></label></div>
-      <div class="row" id="director-approval"
-        style="display: none;">
-       <div><label>Department Director:<input type="text"></label></div>
-<div class="row" id=director-approval" style="display: none;">
-  <div><label>Department Director:<input type="text"></label>
-    </div></div>
+    </div>
+    <div class="row" id="director-approval-vacation" style="display: none;">
+      <div><label>Department Director:<input type="text"></label></div>
+    </div>
     <button type="submit">Submit Vacation Request</button>
   </form>
 </div>
@@ -124,9 +137,10 @@
     });
     document.getElementById(selected).style.display = 'block';
   }
-  function toggleDirectorApproval() {
-    const isSupervisory = document.getElementById("director-approval").style.display = isSupervisory ? 
-      "flex" : "none";
+
+  function toggleDirectorApproval(selectElem, targetId) {
+    const isSupervisory = selectElem.value === "Yes";
+    document.getElementById(targetId).style.display = isSupervisory ? "flex" : "none";
   }
 </script>
 
