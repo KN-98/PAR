@@ -66,6 +66,63 @@ $stmt->execute([
 
 // 2. If approved, trigger next approver via email (TO BE IMPLEMENTED) 
 
+require 'email_helper.php'; 
+
+ 
+
+// === Approval Chain Order === 
+
+$approvalSteps = [ 
+
+    'Project Manager', 
+
+    'Contract Engineer', 
+
+    'Group Manager', 
+
+    'Department Director' 
+
+]; 
+
+ 
+
+$currentIndex = array_search($role, $approvalSteps); 
+
+if ($decision === 'Approved' && $currentIndex !== false && $currentIndex < count($approvalSteps) - 1) { 
+
+    $nextRole = $approvalSteps[$currentIndex + 1]; 
+
+ 
+
+    // Find the next approver for this form 
+
+    $stmt = $conn->prepare("SELECT u.email, u.name FROM approvals a 
+
+        JOIN users u ON a.approver_id = u.id 
+
+        WHERE a.form_id = :form_id AND a.role = :role"); 
+
+ 
+
+    $stmt->execute([ 
+
+        'form_id' => $formId, 
+
+        'role' => $nextRole 
+
+    ]); 
+
+    $nextApprover = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+ 
+
+    if ($nextApprover) { 
+
+        sendApprovalEmail($nextApprover['email'], $nextApprover['name'], $formId, $nextRole); 
+
+    } 
+
+} 
  
 
 // Redirect back to dashboard 
