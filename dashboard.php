@@ -1,48 +1,26 @@
 <?php 
 
-Session_start(); 
+session_start(); 
 
-If (!isset($_SESSION[‘user_id’])) { 
+ 
 
-    Header(“Location: approver_login.php”); 
+//  1. Security check — only logged-in users can access 
 
-    Exit(); 
+if (!isset($_SESSION['user_id'])) { 
+
+    header("Location: approver_login.php"); 
+
+    exit(); 
 
 } 
 
  
 
-$userId = $_SESSION[‘user_id’]; 
+//  2. Get user info from session 
 
-$userRole = $_SESSION[‘user_role’]; 
+$user_name = $_SESSION['user_name']; 
 
-$userName = $_SESSION[‘user_name’]; 
-
- 
-
-// Simulated DB connection (replace this later) 
-
-Require ‘db_connect.php’; 
-
- 
-
-// Get forms assigned to this approver and pending for their role 
-
-$sql = “SELECT f.id AS form_id, f.form_type, f.employee_name, a.status 
-
-        FROM approvals a 
-
-        JOIN forms f ON f.id = a.form_id 
-
-        WHERE a.approver_id = :uid AND a.role = :role AND a.status = ‘Pending’”; 
-
- 
-
-$stmt = $conn->prepare($sql); 
-
-$stmt->execute([‘uid’ => $userId, ‘role’ => $userRole]); 
-
-$forms = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+$user_role = $_SESSION['user_role']; 
 
 ?> 
 
@@ -54,19 +32,79 @@ $forms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <head> 
 
-    <title>Approval Dashboard</title> 
+    <title>Approver Dashboard</title> 
 
     <style> 
 
-        Body { font-family: Arial; padding: 20px; background: #f4f4f4; } 
+        body { 
 
-        Table { border-collapse: collapse; width: 100%; background: white; box-shadow: 0 0 10px #ccc; } 
+            font-family: Arial, sans-serif; 
 
-        Th, td { padding: 12px; border: 1px solid #ccc; text-align: left; } 
+            background: #f4f4f4; 
 
-        H2 { color: navy; } 
+            margin: 0; 
 
-        a.button { background: navy; color: white; padding: 6px 12px; text-decoration: none; border-radius: 5px; } 
+            padding: 20px; 
+
+        } 
+
+        .header { 
+
+            background: navy; 
+
+            color: white; 
+
+            padding: 15px 20px; 
+
+            display: flex; 
+
+            justify-content: space-between; 
+
+            align-items: center; 
+
+        } 
+
+        .header h2 { 
+
+            margin: 0; 
+
+        } 
+
+        .logout-form { 
+
+            margin: 0; 
+
+        } 
+
+        .logout-form button { 
+
+            background: red; 
+
+            color: white; 
+
+            border: none; 
+
+            padding: 8px 14px; 
+
+            border-radius: 5px; 
+
+            cursor: pointer; 
+
+        } 
+
+        .content { 
+
+            background: white; 
+
+            margin-top: 20px; 
+
+            padding: 20px; 
+
+            border-radius: 10px; 
+
+            box-shadow: 0 0 10px #ccc; 
+
+        } 
 
     </style> 
 
@@ -76,62 +114,38 @@ $forms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
  
 
-<h2>Welcome, <?= htmlspecialchars($userName) ?> (<?= $userRole ?>)</h2> 
+<!--  Header with logout --> 
 
-<p><a href=”logout.php”>Logout</a></p> 
+<div class="header"> 
+
+    <h2>Welcome, <?= htmlspecialchars($user_name) ?> (<?= $user_role ?>)</h2> 
+
+    <form action="logout.php" method="post" class="logout-form"> 
+
+        <button type="submit">Logout</button> 
+
+    </form> 
+
+</div> 
 
  
 
-<?php if (count($forms) > 0): ?> 
+<!--  Main content --> 
 
-    <h3>Pending Approvals</h3> 
+<div class="content"> 
 
-    <table> 
+    <h3>Your Approver Dashboard</h3> 
 
-        <tr> 
+    <p>This is where you can see forms awaiting your approval, approved history, or request details.</p> 
 
-            <th>Form ID</th> 
+ 
 
-            <th>Employee Name</th> 
 
-            <th>Form Type</th> 
 
-            <th>Status</th> 
-
-            <th>Action</th> 
-
-        </tr> 
-
-        <?php foreach ($forms as $form): ?> 
-
-            <tr> 
-
-                <td><?= $form[‘form_id’] ?></td> 
-
-                <td><?= $form[‘employee_name’] ?></td> 
-
-                <td><?= $form[‘form_type’] ?></td> 
-
-                <td><?= $form[‘status’] ?></td> 
-
-                <td><a class=”button” href=”form_view.php?form_id=<?= $form[‘form_id’] ?>”>View</a></td> 
-
-            </tr> 
-
-        <?php endforeach; ?> 
-
-    </table> 
-
-<?php else: ?> 
-
-    <p>No pending approvals for you right now.</p> 
-
-<?php endif; ?> 
+</div> 
 
  
 
 </body> 
 
 </html> 
-
- 
