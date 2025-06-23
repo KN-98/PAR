@@ -1,135 +1,108 @@
 <?php 
 
-Session_start(); 
+// === Supabase DB Config === 
 
-If (!isset($_SESSION[‘user_id’])) { 
+$host = ‘your_supabase_host’; // e.g., db.abc123.supabase.co 
 
-    Header(“Location: approver_login.php”); 
+$db   = ‘postgres’; 
 
-    Exit(); 
+$user = ‘postgres’; 
+
+$pass = ‘your_supabase_db_password’; 
+
+$dsn  = “pgsql:host=$host;port=5432;dbname=$db”; 
+
+ 
+
+Try { 
+
+    $db = new PDO($dsn, $user, $pass); 
+
+} catch (PDOException $e) { 
+
+    Die(“DB Error: “ . $e->getMessage()); 
 
 } 
 
  
 
-Require ‘db_connect.php’; 
+// === POST Inputs === 
+
+$form_id = $_POST[‘form_id’]; 
+
+$current_role = $_POST[‘role’]; 
+
+$current_user_id = $_POST[‘user_id’]; 
 
  
 
-$formId = $_POST[‘form_id’]; 
+// === 1. Mark current approval as Approved === 
 
-$approverId = $_POST[‘approver_id’]; 
+$approve = $db->prepare(“UPDATE approvals  
 
-$role = $_POST[‘role’]; 
+                         SET status = ‘Approved’, approved_at = NOW()  
 
-$decision = $_POST[‘decision’]; 
+                         WHERE form_id = ? AND approver_id = ?”); 
 
-$remarks = $_POST[‘remarks’]; 
-
-$now = date(‘Y-m-d H:i:s’); 
+$approve->execute([$form_id, $current_user_id]); 
 
  
 
-// 1. Update the approval 
+// === 2. Role Order Logic === 
 
-$sql = “UPDATE approvals SET  
+$role_order = [‘Project Manager’, ‘Contract Engineer’, ‘Group Manager’, ‘Department Director’]; 
 
-    Status = :status,  
-
-    Remarks = :remarks,  
-
-    Approved_at = TO_TIMESTAMP(:approved_at, ‘YYYY-MM-DD HH24:MI:SS’) 
-
-    WHERE form_id = :form_id AND approver_id = :approver_id AND role = :role”; 
+$current_index = array_search($current_role, $role_order); 
 
  
 
-$stmt = $conn->prepare($sql); 
+If ($current_index !== false && $current_index < count($role_order) – 1) { 
 
-$stmt->execute([ 
-
-    ‘status’ => $decision, 
-
-    ‘remarks’ => $remarks, 
-
-    ‘approved_at’ => $now, 
-
-    ‘form_id’ => $formId, 
-
-    ‘approver_id’ => $approverId, 
-
-    ‘role’ => $role 
-
-]); 
+    $next_role = $role_order[$current_index + 1]; 
 
  
 
-// 2. If approved, trigger next approver via email (TO BE IMPLEMENTED) 
+    // === 3. Get Next Approver Info === 
 
-require 'email_helper.php'; 
+    $next = $db->prepare(“SELECT id, email FROM users WHERE role = ? LIMIT 1”); 
 
- 
+    $next->execute([$next_role]); 
 
-// === Approval Chain Order === 
-
-$approvalSteps = [ 
-
-    'Project Manager', 
-
-    'Contract Engineer', 
-
-    'Group Manager', 
-
-    'Department Director' 
-
-]; 
+    $next_user = $next->fetch(PDO::FETCH_ASSOC); 
 
  
 
-$currentIndex = array_search($role, $approvalSteps); 
+    If ($next_user) { 
 
-if ($decision === 'Approved' && $currentIndex !== false && $currentIndex < count($approvalSteps) - 1) { 
+        // === 4. Log fake email into email_queue === 
 
-    $nextRole = $approvalSteps[$currentIndex + 1]; 
+        $subject = “Approval Needed for Form #$form_id”; 
 
- 
-
-    // Find the next approver for this form 
-
-    $stmt = $conn->prepare("SELECT u.email, u.name FROM approvals a 
-
-        JOIN users u ON a.approver_id = u.id 
-
-        WHERE a.form_id = :form_id AND a.role = :role"); 
+        $message = “Hi $next_role,\n\nForm #$form_id has been approved by $current_role.\nPlease review it.”; 
 
  
 
-    $stmt->execute([ 
+        $insert = $db->prepare(“INSERT INTO email_queue (form_id, recipient_email, recipient_role, subject, message) 
 
-        'form_id' => $formId, 
+                                VALUES (?, ?, ?, ?, ?)”); 
 
-        'role' => $nextRole 
-
-    ]); 
-
-    $nextApprover = $stmt->fetch(PDO::FETCH_ASSOC); 
+        $insert->execute([$form_id, $next_user[‘email’], $next_role, $subject, $message]); 
 
  
 
-    if ($nextApprover) { 
+        Echo “✅ Approval recorded. Fake email queued for: {$next_user[‘email’]}”; 
 
-        sendApprovalEmail($nextApprover['email'], $nextApprover['name'], $formId, $nextRole); 
+    } else { 
+
+        Echo “⚠️ Next approver ($next_role) not found in users table.”; 
 
     } 
 
+} else { 
+
+    Echo “✅ Final approval completed or invalid role.”; 
+
 } 
- 
-
-// Redirect back to dashboard 
-
-Header(“Location: dashboard.php”); 
-
-Exit(); 
 
 ?> 
 
