@@ -1,5 +1,7 @@
 <?php
 include ('session_check.php');
+
+<a href="generate_pdf.php? $form_id=1" target="_blank"> Preview form as PDF</a>
 ?>
   
 <!DOCTYPE html> 
