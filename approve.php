@@ -1,7 +1,8 @@
 <?php 
 
-// === Supabase DB Config === 
 
+include ('session_check.php');
+// === Supabase DB Config === 
 $host = ‘your_supabase_host’; // e.g., db.abc123.supabase.co 
 
 $db   = ‘postgres’; 
