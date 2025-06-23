@@ -1,5 +1,8 @@
 <?php 
 
+include ('session_check.php');
+
+
 // === Supabase DB Config === 
 
 $host = ‘your_supabase_host’; // same as before 
