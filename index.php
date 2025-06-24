@@ -1,6 +1,6 @@
 <?php
 include ('session_check.php');
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -147,6 +147,8 @@ include ('session_check.php');
     document.getElementById(targetId).style.display = isSupervisory ? "flex" : "none";
   }
 </script>
+
+  ?>
 
 </body>
 </html>
